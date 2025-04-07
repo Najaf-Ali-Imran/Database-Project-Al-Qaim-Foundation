@@ -1,0 +1,815 @@
+﻿<Page x:Class="AlQaim.Admin_Requests"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:AlQaim"
+      xmlns:models="clr-namespace:AlQaim.Models"
+      xmlns:converters="clr-namespace:AlQaim.Converters"
+      xmlns:controls="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:material="http://materialdesigninxaml.net/winfx/xaml/iconpacks"
+      mc:Ignorable="d" 
+      d:DesignHeight="650" d:DesignWidth="900"
+      Title="RequestManagement">
+
+    <Page.Resources>
+        <!-- Colors -->
+        <SolidColorBrush x:Key="PrimaryBackColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryBackColor" Color="#F4F7FE"/>
+        <SolidColorBrush x:Key="PrimaryAccentColor" Color="#4361EE"/>
+        <SolidColorBrush x:Key="SecondaryAccentColor" Color="#3A0CA3"/>
+        <SolidColorBrush x:Key="TextColor" Color="#333333"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#E1E5EB"/>
+        <SolidColorBrush x:Key="LightGrayColor" Color="#F2F2F2"/>
+        <SolidColorBrush x:Key="ApprovedColor" Color="#27AE60"/>
+        <SolidColorBrush x:Key="PendingColor" Color="#F39C12"/>
+        <SolidColorBrush x:Key="RejectedColor" Color="#E74C3C"/>
+        <SolidColorBrush x:Key="SuccessColor" Color="Green"/>
+        <SolidColorBrush x:Key="ErrorColor" Color="Red"/>
+
+        <!-- Status to Color Converter -->
+
+        <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+        <converters:StatusToCancelVisibilityConverter x:Key="StatusToCancelVisibilityConverter"/>
+        <converters:StringIsNullOrEmptyConverter x:Key="StringIsNullOrEmptyConverter"/>
+        <converters:AlternatingRowBackgroundConverter x:Key="AlternatingRowBackgroundConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <!-- Button Styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryAccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="6" 
+                                Padding="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SecondaryAccentColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="IconButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="6" 
+                                Padding="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F0F0F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="4" 
+                                Padding="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F0F0F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- DataGrid Styles -->
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="RowBackground" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="AlternatingRowBackground" Value="{StaticResource SecondaryBackColor}"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="RowHeight" Value="45"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+        </Style>
+
+        <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource SecondaryBackColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Focusable="false" 
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentColor}"/>
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ComboBox Style -->
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <!-- Wrap the ToggleButton in a Border to get rounded corners -->
+                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6">
+                                <ToggleButton x:Name="ToggleButton"
+                                      IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Padding="{TemplateBinding Padding}"
+                                      Focusable="False"
+                                      HorizontalContentAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter Grid.Column="0"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left"
+                                                  Margin="{TemplateBinding Padding}"/>
+                                        <Path Grid.Column="1" 
+                                      Data="M0,0 L5,5 L10,0" 
+                                      Fill="{StaticResource TextColor}"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Right"
+                                      Margin="0,0,10,0"
+                                      Stretch="Fill"
+                                      Width="10"
+                                      Height="5"/>
+                                    </Grid>
+                                </ToggleButton>
+                            </Border>
+                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           PopupAnimation="Slide"
+                           Placement="Bottom"
+                           Focusable="False">
+                                <Border BorderBrush="{StaticResource BorderColor}"
+                                BorderThickness="1"
+                                Background="{StaticResource PrimaryBackColor}"
+                                CornerRadius="6"
+                                Margin="0,5,0,0">
+                                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Status Pill Style -->
+        <Style x:Key="StatusPillStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="10,3"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+
+        <!-- Label Style -->
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource SecondaryBackColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Section -->
+        <StackPanel Grid.Row="0" Margin="30,25,30,20">
+            <TextBlock Text="Manage Lab Requests" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextColor}"/>
+
+            <Grid Margin="0,15,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Search Bar -->
+                <Border Grid.Column="0" 
+                        Background="{StaticResource PrimaryBackColor}" 
+                        CornerRadius="6" 
+                        BorderBrush="{StaticResource BorderColor}" 
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <iconPacks:PackIconMaterial Grid.Column="0" 
+                                                   Kind="Magnify" 
+                                                   Width="16" Height="16" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="12,0,0,0"
+                                                   Foreground="{StaticResource TextColor}"/>
+                        <TextBox Grid.Column="1" 
+                                 x:Name="txtSearch" 
+                                 Style="{StaticResource TextBoxStyle}" 
+                                 BorderThickness="0" 
+                                 Margin="5,0,0,0" 
+                                 Padding="5,10"
+                                 FontSize="14"
+                                 Background="Transparent"
+                                 TextChanged="TxtSearch_TextChanged"
+                                 VerticalAlignment="Center"
+                                 Foreground="{StaticResource TextColor}">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxStyle}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                                <Grid>
+                                                    <TextBlock Text="Search requests..." 
+                                                               Margin="{TemplateBinding Padding}"
+                                                               Foreground="Gray"
+                                                               Visibility="{Binding Text.IsEmpty, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                                    <ScrollViewer x:Name="PART_ContentHost" 
+                                                                 Focusable="False"
+                                                                 Margin="{TemplateBinding Padding}"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                    </Grid>
+                </Border>
+
+                <!-- Type Filter -->
+                <ComboBox Grid.Column="1"
+                          x:Name="cmbRequestType"
+                          Style="{StaticResource ComboBoxStyle}"
+                          Margin="10,0,0,0"
+                          Width="180"
+                          SelectionChanged="CmbRequestType_SelectionChanged">
+                    <ComboBoxItem Content="All Requests" IsSelected="True"/>
+                    <ComboBoxItem Content="Test Requests"/>
+                    <ComboBoxItem Content="Inventory Restock"/>
+                    <ComboBoxItem Content="Equipment Maintenance"/>
+                </ComboBox>
+
+                <!-- Refresh Button -->
+                <Button Grid.Column="2" 
+                        x:Name="btnRefresh" 
+                        Style="{StaticResource IconButtonStyle}" 
+                        ToolTip="Refresh" 
+                        Margin="10,0,0,0"
+                        Click="BtnRefresh_Click">
+                    <iconPacks:PackIconMaterial Kind="Refresh" Width="20" Height="20" Foreground="{StaticResource TextColor}"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <!-- DataGrid Section -->
+        <Border Grid.Row="1" 
+                Background="{StaticResource PrimaryBackColor}" 
+                CornerRadius="10" 
+                Margin="30,0,30,30">
+            <Grid>
+                <DataGrid x:Name="dgRequests" 
+                          Style="{StaticResource DataGridStyle}"
+                          ColumnHeaderStyle="{StaticResource DataGridHeaderStyle}"
+                          CellStyle="{StaticResource DataGridCellStyle}"
+                          Margin="1"
+                          BorderThickness="0"
+                          Padding="10"
+                          SelectionChanged="DgRequests_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Request ID" Binding="{Binding RequestId}" Width="0.7*"/>
+                        <DataGridTextColumn Header="Request Type" Binding="{Binding RequestType}" Width="1.2*"/>
+                        <DataGridTextColumn Header="Submitted By" Binding="{Binding SubmittedBy}" Width="1*"/>
+                        <DataGridTextColumn Header="Submission Date" Binding="{Binding SubmissionDate, StringFormat='{}{0:MM/dd/yyyy HH:mm}'}" Width="1*"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="1.5*"/>
+                        <DataGridTemplateColumn Header="Status" Width="0.8*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource StatusPillStyle}"
+                                            Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}">
+                                        <TextBlock Text="{Binding Status}" 
+                                                   Foreground="White" 
+                                                   FontSize="12" 
+                                                   FontWeight="Medium"
+                                                   HorizontalAlignment="Center"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Actions" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button x:Name="btnView" 
+                                                Style="{StaticResource ActionButtonStyle}"
+                                                ToolTip="View Details"
+                                                Click="BtnView_Click">
+                                            <iconPacks:PackIconMaterial Kind="Eye" Width="16" Height="16" Foreground="{StaticResource TextColor}"/>
+                                        </Button>
+                                        <Button x:Name="btnApprove" 
+                                                Style="{StaticResource ActionButtonStyle}"
+                                                ToolTip="Approve Request"
+                                                Margin="5,0,0,0"
+                                                Click="BtnApprove_Click"
+                                                Visibility="{Binding CanApprove, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <iconPacks:PackIconMaterial Kind="Check" Width="16" Height="16" Foreground="{StaticResource ApprovedColor}"/>
+                                        </Button>
+                                        <Button x:Name="btnReject" 
+                                                Style="{StaticResource ActionButtonStyle}"
+                                                ToolTip="Reject Request"
+                                                Margin="5,0,0,0"
+                                                Click="BtnReject_Click"
+                                                Visibility="{Binding CanReject, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <iconPacks:PackIconMaterial Kind="Close" Width="16" Height="16" Foreground="{StaticResource RejectedColor}"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Request Details Modal Popup -->
+        <Border x:Name="modalOverlay" 
+                Grid.RowSpan="2" 
+                Background="#80000000" 
+                Visibility="Collapsed">
+            <Border Background="{StaticResource PrimaryBackColor}" 
+                    CornerRadius="10" 
+                    Width="500" 
+                    MaxHeight="650"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Padding="25">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Modal Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock x:Name="modalTitle" 
+                                       Text="Request Details" 
+                                       FontSize="20" 
+                                       FontWeight="Bold" 
+                                       Foreground="{StaticResource TextColor}"/>
+
+                            <Grid Margin="0,12,0,0">
+                                <TextBlock x:Name="modalRequestId" 
+                                           Text="Request ID: #12345" 
+                                           FontSize="14" 
+                                           Foreground="{StaticResource TextColor}"
+                                           Opacity="0.7"/>
+
+                                <Border x:Name="modalStatusPill"
+                                        Style="{StaticResource StatusPillStyle}"
+                                        Background="{StaticResource PendingColor}"
+                                        HorizontalAlignment="Right">
+                                    <TextBlock x:Name="modalStatus"
+                                               Text="Pending" 
+                                               Foreground="White" 
+                                               FontSize="12" 
+                                               FontWeight="Medium"/>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+
+                        <Button x:Name="btnCloseModal" 
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Top"
+                                Style="{StaticResource IconButtonStyle}"
+                                Click="BtnCloseModal_Click">
+                            <iconPacks:PackIconMaterial Kind="Close" Width="14" Height="14" Foreground="{StaticResource TextColor}"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Details Fields -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                    <TextBlock Text="Request Type" FontWeight="Medium" Foreground="{StaticResource TextColor}"/>
+                                    <TextBlock x:Name="txtRequestType" Text="Test Request" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                    <TextBlock Text="Submission Date" FontWeight="Medium" Foreground="{StaticResource TextColor}"/>
+                                    <TextBlock x:Name="txtSubmissionDate" Text="03/20/2025 09:45 AM" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="Submitted By" FontWeight="Medium" Foreground="{StaticResource TextColor}"/>
+                                <TextBlock x:Name="txtSubmittedBy" Text="John Doe (Lab Technician)" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="Description" FontWeight="Medium" Foreground="{StaticResource TextColor}"/>
+                                <TextBlock x:Name="txtDescription" 
+                                           Text="Blood test for patient #P-10025 - Complete Blood Count (CBC) with differential and platelet count." 
+                                           Foreground="{StaticResource TextColor}" 
+                                           TextWrapping="Wrap"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+
+                            <!-- Request Type Specific Fields -->
+                            <!-- Test Request Fields -->
+                            <Border x:Name="testRequestFields" 
+                                    BorderBrush="{StaticResource BorderColor}" 
+                                    BorderThickness="1" 
+                                    CornerRadius="6" 
+                                    Padding="15" 
+                                    Margin="0,5,0,15"
+                                    Background="{StaticResource SecondaryBackColor}">
+                                <StackPanel>
+                                    <TextBlock Text="Test Request Details" 
+                                               FontWeight="SemiBold" 
+                                               Foreground="{StaticResource TextColor}" 
+                                               Margin="0,0,0,10"/>
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="Patient ID" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtPatientId" Text="P-10025" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Patient Name" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtPatientName" Text="Ahmed Ali" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="Test Type" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtTestType" Text="Complete Blood Count (CBC)" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,0,0,0">
+                                        <TextBlock Text="Doctor's Notes" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtDoctorNotes" 
+                                                   Text="Patient has been showing signs of fatigue. Check for anemia and infection markers." 
+                                                   Foreground="{StaticResource TextColor}" 
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Inventory Request Fields -->
+                            <Border x:Name="inventoryRequestFields" 
+                                BorderBrush="{StaticResource BorderColor}" 
+                                BorderThickness="1" 
+                                CornerRadius="6" 
+                                Padding="15" 
+                                Margin="0,5,0,15"
+                                Background="{StaticResource SecondaryBackColor}"
+                                Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock Text="Inventory Request Details" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextColor}" 
+                                           Margin="0,0,0,10"/>
+
+                                    <!-- Added Item Code -->
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="Item Code" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtItemCode" Text="" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Added Current Stock -->
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="Current Stock" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtCurrentStock" Text="" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="Requested Quantity" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtRequestedQuantity" Text="20 units" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Priority" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtPriority" Text="High" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Margin="0,0,0,0">
+                                        <TextBlock Text="Item Name" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtItemName" Text="Blood Collection Tubes (EDTA)" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Equipment Maintenance Fields -->
+                            <Border x:Name="equipmentRequestFields" 
+                                    BorderBrush="{StaticResource BorderColor}" 
+                                    BorderThickness="1" 
+                                    CornerRadius="6" 
+                                    Padding="15" 
+                                    Margin="0,5,0,15"
+                                    Background="{StaticResource SecondaryBackColor}"
+                                    Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock Text="Equipment Maintenance Details" 
+                                               FontWeight="SemiBold" 
+                                               Foreground="{StaticResource TextColor}" 
+                                               Margin="0,0,0,10"/>
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="Equipment ID" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtEquipmentId" Text="EQ-8795" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Maintenance Type" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtMaintenanceType" Text="Preventive" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="Equipment Name" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtEquipmentName" Text="Centrifuge Model XL-5000" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                    </StackPanel>
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="Last Maintenance" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtLastMaintenance" Text="01/15/2025" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="Priority" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                            <TextBlock x:Name="txtEquipmentPriority" Text="Medium" Foreground="{StaticResource TextColor}" Margin="0,5,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Margin="0,0,0,0">
+                                        <TextBlock Text="Issue Description" FontWeight="Medium" Foreground="{StaticResource TextColor}" Opacity="0.8"/>
+                                        <TextBlock x:Name="txtIssueDescription" 
+                                                   Text="Machine making unusual noise during operation. Required for routine preventive maintenance as per schedule." 
+                                                   Foreground="{StaticResource TextColor}" 
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Comments/Notes Section -->
+                            <StackPanel x:Name="commentsSection" Margin="0,0,0,15">
+                                <TextBlock Text="Admin Notes" FontWeight="Medium" Foreground="{StaticResource TextColor}"/>
+                                <TextBox x:Name="txtAdminNotes" 
+                                         Style="{StaticResource TextBoxStyle}" 
+                                         Height="80" 
+                                         TextWrapping="Wrap" 
+                                         AcceptsReturn="True"
+                                         VerticalScrollBarVisibility="Auto"
+                                         Margin="0,5,0,0"
+                                         Text=""/>
+                            </StackPanel>
+
+                            <!-- Action History -->
+                            <StackPanel x:Name="actionHistorySection" Margin="0,0,0,0">
+                                <TextBlock Text="Action History" FontWeight="Medium" Foreground="{StaticResource TextColor}" Margin="0,0,0,5"/>
+                                <Border BorderBrush="{StaticResource BorderColor}" 
+                                        BorderThickness="1" 
+                                        CornerRadius="6" 
+                                        Background="{StaticResource SecondaryBackColor}"
+                                        Padding="10">
+                                    <StackPanel x:Name="actionHistoryItems">
+                                        <!-- Sample Action History Items -->
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" 
+                                                    Width="4" 
+                                                    Height="4" 
+                                                    Background="{StaticResource PrimaryAccentColor}" 
+                                                    CornerRadius="2"
+                                                    Margin="0,8,0,0"/>
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="Request submitted by John Doe" 
+                                                       Foreground="{StaticResource TextColor}"
+                                                       Margin="10,0,0,0"/>
+                                            <TextBlock Grid.Column="2" 
+                                                       Text="03/20/2025 09:45 AM" 
+                                                       Foreground="{StaticResource TextColor}"
+                                                       Opacity="0.7"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Action Buttons -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button x:Name="btnRejectInModal" 
+                                Content="Reject Request" 
+                                Padding="15,8" 
+                                Background="Transparent"
+                                Foreground="{StaticResource RejectedColor}"
+                                BorderBrush="{StaticResource RejectedColor}"
+                                BorderThickness="1"
+                                Cursor="Hand"
+                                Click="BtnRejectInModal_Click">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Button x:Name="btnApproveInModal" 
+                                Content="Approve Request" 
+                                Style="{StaticResource PrimaryButtonStyle}" 
+                                Margin="10,0,0,0"
+                                Click="BtnApproveInModal_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
+        <Border x:Name="toastNotification" 
+        Grid.Row="1" 
+        Background="{StaticResource PrimaryAccentColor}" 
+        CornerRadius="8" 
+        Padding="15,12" 
+        Width="300"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Top"
+        Margin="0,20,0,0"
+        Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <iconPacks:PackIconMaterial Grid.Column="0" 
+                                    x:Name="toastIcon" 
+                                    Kind="CheckCircle" 
+                                    Width="20" 
+                                    Height="20" 
+                                    Foreground="White"
+                                    VerticalAlignment="Center"/>
+
+                <TextBlock Grid.Column="1" 
+                   x:Name="toastMessage" 
+                   Text="Operation completed successfully!" 
+                   Foreground="White"
+                   VerticalAlignment="Center"
+                   Margin="10,0,0,0"/>
+
+                <Button Grid.Column="2" 
+                x:Name="btnCloseToast" 
+                Style="{StaticResource IconButtonStyle}"
+                Background="Transparent"
+                HorizontalAlignment="Right"
+                Click="BtnCloseToast_Click">
+                    <iconPacks:PackIconMaterial Kind="Close" 
+                                        Width="14" 
+                                        Height="14" 
+                                        Foreground="White"/>
+                </Button>
+            </Grid>
+        </Border>
+        
+
+    </Grid>
+</Page>
