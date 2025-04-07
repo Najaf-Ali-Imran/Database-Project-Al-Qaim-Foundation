@@ -1,0 +1,864 @@
+﻿<Page x:Class="AlQaim.Settings"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="800"
+      Title="Settings"
+      >
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="PrimaryBackColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SecondaryBackColor" Color="#F4F7FE"/>
+        <SolidColorBrush x:Key="PrimaryAccentColor" Color="#4361EE"/>
+        <SolidColorBrush x:Key="SecondaryAccentColor" Color="#3A0CA3"/>
+        <SolidColorBrush x:Key="TextPrimaryColor" Color="#2D3748"/>
+        <SolidColorBrush x:Key="TextSecondaryColor" Color="#718096"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#E2E8F0"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Padding" Value="20"/>
+        </Style>
+
+        <!-- Section Header Style -->
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryColor}"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <!-- SubSection Header Style -->
+        <Style x:Key="SubSectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryColor}"/>
+            <Setter Property="Margin" Value="0,16,0,12"/>
+        </Style>
+
+        <!-- Label Style -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Margin" Value="0,0,16,6"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryColor}"/>
+        </Style>
+
+        <!-- Secondary Label Style -->
+        <Style x:Key="SecondaryLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryColor}"/>
+        </Style>
+
+        <!-- Button Style -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryAccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SecondaryAccentColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,8,0,0"/>
+        </Style>
+        <Style x:Key="ComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="MinHeight" Value="28"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+        <Style x:Key="ModernScrollBarThumb" TargetType="Thumb">
+            <Setter Property="Height" Value="115"/>
+            <Setter Property="Width" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="thumbBorder"
+            Background="{StaticResource PrimaryAccentColor}"
+            BorderBrush="LightGray" 
+            BorderThickness="1"
+            CornerRadius="6"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#FF4A90E2"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Background" Value="#FF357ABD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.LineUpCommand"
+                    Style="{x:Null}" 
+                    IsTabStop="False"
+                    Opacity="0"
+                    Height="0"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ModernScrollBarThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.LineDownCommand"
+                    Style="{x:Null}" 
+                    IsTabStop="False"
+                    Opacity="0"
+                    Height="0"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Custom Expander Style -->
+        <Style x:Key="ModernExpanderStyle" TargetType="Expander">
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <Border BorderThickness="1" CornerRadius="6" 
+                                BorderBrush="{StaticResource BorderColor}"
+                                Background="{StaticResource PrimaryBackColor}">
+                            <DockPanel>
+                                <ToggleButton DockPanel.Dock="Top" 
+                                              IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Content="{TemplateBinding Header}"
+                                              FontWeight="Medium"
+                                              Foreground="{StaticResource TextPrimaryColor}"
+                                              Padding="16,12"
+                                              Cursor="Hand">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <ContentPresenter Grid.Column="0" ContentSource="Content" 
+                                                                      VerticalAlignment="Center" 
+                                                                      HorizontalAlignment="Left"/>
+                                                    <Path x:Name="arrow" Grid.Column="1" 
+                                                          Fill="{StaticResource PrimaryAccentColor}"
+                                                          HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center" 
+                                                          Data="M 0 0 L 8 8 L 16 0" Stretch="Uniform" 
+                                                          Width="12" Height="6"/>
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="arrow" Property="Data" Value="M 0 8 L 8 0 L 16 8"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <Border DockPanel.Dock="Bottom" 
+                                        BorderThickness="0" 
+                                        Visibility="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ContentPresenter Margin="16" Content="{TemplateBinding Content}"/>
+                                </Border>
+                            </DockPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- FAQ Expander Style -->
+        <Style x:Key="FAQExpanderStyle" TargetType="Expander">
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <Border BorderThickness="{TemplateBinding BorderThickness}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                CornerRadius="6"
+                                Background="{TemplateBinding Background}">
+                            <DockPanel>
+                                <ToggleButton DockPanel.Dock="Top" 
+                                              IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              Content="{TemplateBinding Header}"
+                                              FontWeight="Medium"
+                                              Padding="12,10"
+                                              Cursor="Hand">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <ContentPresenter Grid.Column="0" ContentSource="Content" 
+                                                                      VerticalAlignment="Center" 
+                                                                      HorizontalAlignment="Left"/>
+                                                    <Path x:Name="arrow" Grid.Column="1" 
+                                                          Fill="{StaticResource PrimaryAccentColor}"
+                                                          HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center" 
+                                                          Data="M 0 0 L 6 6 L 12 0" Stretch="Uniform" 
+                                                          Width="10" Height="5"/>
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="arrow" Property="Data" Value="M 0 6 L 6 0 L 12 6"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <Border DockPanel.Dock="Bottom" 
+                                        BorderThickness="0,1,0,0" 
+                                        BorderBrush="{StaticResource BorderColor}"
+                                        Visibility="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <ContentPresenter Margin="12" Content="{TemplateBinding Content}"/>
+                                </Border>
+                            </DockPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="6"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Focusable="False" 
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden"
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource PrimaryAccentColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource PrimaryAccentColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <!-- PasswordBox Style -->
+        <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type PasswordBox}">
+                        <Border x:Name="border" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="6"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Focusable="False" 
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden"
+                                          Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource PrimaryAccentColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource PrimaryAccentColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <!-- ComboBox Style -->
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryBackColor}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" 
+                                          Focusable="false"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Border x:Name="templateRoot" 
+                                                BorderBrush="{StaticResource BorderColor}" 
+                                                BorderThickness="1" 
+                                                Background="{StaticResource PrimaryBackColor}"
+                                                CornerRadius="6">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0" 
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                                                  Content="{TemplateBinding Content}" 
+                                                                  ContentStringFormat="{TemplateBinding ContentStringFormat}" 
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                                  Margin="{TemplateBinding Padding}" 
+                                                                  RecognizesAccessKey="True" 
+                                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                <Path x:Name="arrow" 
+                                                      Grid.Column="1" 
+                                                      Fill="{StaticResource TextPrimaryColor}" 
+                                                      HorizontalAlignment="Center" 
+                                                      Margin="0,0,10,0" 
+                                                      VerticalAlignment="Center" 
+                                                      Data="M 0 0 L 6 6 L 12 0" 
+                                                      Width="10" Height="5"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource PrimaryAccentColor}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                                <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource PrimaryAccentColor}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="true">
+                                                <Setter Property="Data" TargetName="arrow" Value="M 0 6 L 6 0 L 12 6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="contentPresenter" 
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" 
+                                              Content="{TemplateBinding SelectionBoxItem}" 
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" 
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              IsHitTestVisible="false" 
+                                              Margin="{TemplateBinding Padding}" 
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Popup x:Name="PART_Popup" 
+                                   AllowsTransparency="true" 
+                                   Focusable="false" 
+                                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" 
+                                   Placement="Bottom" 
+                                   PopupAnimation="Slide">
+                                <Border x:Name="DropDownBorder" 
+                                        BorderBrush="{StaticResource BorderColor}" 
+                                        BorderThickness="1" 
+                                        Background="{StaticResource PrimaryBackColor}"
+                                        CornerRadius="6"
+              
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}" 
+                                        MinWidth="{Binding ActualWidth, ElementName=templateRoot}">
+                                    <ScrollViewer Margin="0,4">
+                                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                        KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Padding" Value="10,6"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border x:Name="Bd" 
+                                            Background="{TemplateBinding Background}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            Padding="{TemplateBinding Padding}" 
+                                            SnapsToDevicePixels="true">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource SecondaryBackColor}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="true">
+                                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource PrimaryAccentColor}"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <!-- CheckBox Style -->
+        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid x:Name="templateRoot" Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="checkBoxBorder" 
+                                    BorderBrush="{StaticResource BorderColor}" 
+                                    BorderThickness="1" 
+                                    Background="{StaticResource PrimaryBackColor}" 
+                                    CornerRadius="3" 
+                                    Width="18" 
+                                    Height="18">
+                                <Grid x:Name="markGrid">
+                                    <Path x:Name="checkMark" 
+                                      Data="M1,7 L4,10 L10,2" 
+                                      Stroke="White" 
+                                      StrokeThickness="2" 
+                                      Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <ContentPresenter x:Name="contentPresenter" 
+                                              Grid.Column="1" 
+                                              Focusable="False" 
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                             
+                                              RecognizesAccessKey="True" 
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="10,0,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource PrimaryAccentColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="BorderBrush" TargetName="checkBoxBorder" Value="{StaticResource PrimaryAccentColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource PrimaryAccentColor}"/>
+                                <Setter Property="Visibility" TargetName="checkMark" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="{x:Null}">
+                                <Setter Property="Background" TargetName="checkBoxBorder" Value="{StaticResource BorderColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Link Style -->
+        <Style x:Key="HyperlinkStyle" TargetType="Hyperlink">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryAccentColor}"/>
+            <Setter Property="TextDecorations" Value="None"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource SecondaryAccentColor}"/>
+                    <Setter Property="TextDecorations" Value="Underline"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Separator Style -->
+        <Style x:Key="SeparatorStyle" TargetType="Separator">
+            <Setter Property="Background" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Height" Value="1"/>
+            <Setter Property="Margin" Value="0,16,0,16"/>
+        </Style>
+
+        <!-- Global Resource Additions -->
+
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBackColor}" BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderColor}">
+            <TextBlock Text="Profile &amp; Settings" FontSize="24" FontWeight="Bold" Margin="32,24" Foreground="{StaticResource TextPrimaryColor}"/>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Resources>
+                <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
+            </ScrollViewer.Resources>
+            <StackPanel Margin="32,24,32,32">
+                <!-- Profile Section -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Profile" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- User Avatar -->
+                            <Border Grid.Column="0" Width="100" Height="100" 
+                                    Background="{StaticResource SecondaryBackColor}" 
+                                    CornerRadius="50" 
+                                    Margin="0,0,24,0">
+                                <TextBlock x:Name="AvatarInitials" 
+                                           Text="AA" 
+                                           FontSize="36" 
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center" 
+                                           Foreground="{StaticResource PrimaryAccentColor}"/>
+                            </Border>
+
+                            <!-- User Info -->
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Username:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtUsername" 
+                                         Text="Admin" 
+                                         Style="{StaticResource TextBoxStyle}" 
+                                         IsReadOnly="True"/>
+
+                                <TextBlock Text="Email:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtEmail" 
+                                         Text="Admin@AlQaim.org" 
+                                         Style="{StaticResource TextBoxStyle}"/>
+
+                                <TextBlock Text="Role:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtRole" 
+                                         Text="Administrator" 
+                                         Style="{StaticResource TextBoxStyle}" 
+                                         IsReadOnly="True"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Style="{StaticResource SeparatorStyle}"/>
+
+                        <!-- Password Change -->
+                        <TextBlock Text="Change Password" Style="{StaticResource SubSectionHeaderStyle}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Text="Current Password:" 
+                                       Style="{StaticResource LabelStyle}" 
+                                       Width="150"/>
+                            <PasswordBox Grid.Row="0" Grid.Column="1" 
+                                         x:Name="txtCurrentPassword" 
+                                         Style="{StaticResource PasswordBoxStyle}"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" 
+                                       Text="New Password:" 
+                                       Style="{StaticResource LabelStyle}"/>
+                            <PasswordBox Grid.Row="1" Grid.Column="1" 
+                                         x:Name="txtNewPassword" 
+                                         Style="{StaticResource PasswordBoxStyle}"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" 
+                                       Text="Confirm Password:" 
+                                       Style="{StaticResource LabelStyle}"/>
+                            <PasswordBox Grid.Row="2" Grid.Column="1" 
+                                         x:Name="txtConfirmPassword" 
+                                         Style="{StaticResource PasswordBoxStyle}"/>
+
+                            <Button Grid.Row="3" Grid.Column="1" 
+                                    Content="Change Password" 
+                                    Style="{StaticResource PrimaryButtonStyle}" 
+                                    HorizontalAlignment="Left" 
+                                    Click="ChangePassword_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Settings Section -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Settings" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <!-- Theme Selection -->
+                        <TextBlock Text="Theme" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Application Theme:" Style="{StaticResource LabelStyle}" Grid.Column="0"/>
+                            <ComboBox x:Name="cboTheme" Grid.Column="1" 
+                      Style="{StaticResource ComboBoxStyle}" 
+                      SelectionChanged="Theme_SelectionChanged"
+                      MinHeight="30"
+                      ItemContainerStyle="{StaticResource ComboBoxItemStyle}">
+                                <ComboBoxItem Content="Light" IsSelected="True"/>
+                                <ComboBoxItem Content="Dark"/>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Language Selection -->
+                        <TextBlock Text="Language" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Default Language:" Style="{StaticResource LabelStyle}" Grid.Column="0"/>
+                            <ComboBox x:Name="cboLanguage" Grid.Column="1" 
+                      Style="{StaticResource ComboBoxStyle}"
+                      MinHeight="30"
+                      ItemContainerStyle="{StaticResource ComboBoxItemStyle}">
+                                <ComboBoxItem Content="English" IsSelected="True"/>
+                                <ComboBoxItem Content="Urdu"/>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Notification Preferences -->
+                        <TextBlock Text="Notifications" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <StackPanel Margin="0,0,0,16">
+                            <CheckBox Content="Test Completion Alerts" 
+                      Style="{StaticResource CheckBoxStyle}" 
+                      x:Name="chkTestCompletionAlerts" 
+                      IsChecked="True"/>
+                            <TextBlock Text="Receive notifications when laboratory tests are completed" 
+                       Style="{StaticResource SecondaryLabelStyle}" 
+                       Margin="28,0,0,12"/>
+
+                            <CheckBox Content="Appointment Reminders" 
+                      Style="{StaticResource CheckBoxStyle}" 
+                      x:Name="chkAppointmentReminders" 
+                      IsChecked="True"/>
+                            <TextBlock Text="Get reminders for upcoming appointments" 
+                       Style="{StaticResource SecondaryLabelStyle}" 
+                       Margin="28,0,0,12"/>
+                        </StackPanel>
+
+                        <!-- System Settings -->
+                        <TextBlock Text="System" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <StackPanel Margin="0,0,0,16">
+                            <CheckBox Content="Auto-save reports" 
+                      Style="{StaticResource CheckBoxStyle}" 
+                      x:Name="chkAutoSaveReports" 
+                      IsChecked="True"/>
+                            <TextBlock Text="Automatically save reports every 5 minutes" 
+                       Style="{StaticResource SecondaryLabelStyle}" 
+                       Margin="28,0,0,12"/>
+
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Font Size:" 
+                           Style="{StaticResource LabelStyle}" 
+                           Grid.Column="0"/>
+                                <ComboBox Grid.Column="1" 
+                          x:Name="cboFontSize" 
+                          Style="{StaticResource ComboBoxStyle}"
+                          MinHeight="30"
+                          ItemContainerStyle="{StaticResource ComboBoxItemStyle}">
+                                    <ComboBoxItem Content="Small"/>
+                                    <ComboBoxItem Content="Medium" IsSelected="True"/>
+                                    <ComboBoxItem Content="Large"/>
+                                </ComboBox>
+                            </Grid>
+                        </StackPanel>
+
+                        <Button Content="Save Settings" 
+                Style="{StaticResource PrimaryButtonStyle}" 
+                HorizontalAlignment="Left" 
+                Click="SaveSettings_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Help & Support Section -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Help &amp; Support" Style="{StaticResource SectionHeaderStyle}"/>
+
+                        <!-- Contact Information -->
+                        <TextBlock Text="Contact Information" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Text="Email:" 
+                                       Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,5,0,8">
+                                <Hyperlink Style="{StaticResource HyperlinkStyle}" 
+                                           NavigateUri="mailto:support@alqaimlab.org" 
+                                           RequestNavigate="Hyperlink_RequestNavigate">
+                                    support@alqaimlab.org
+                                </Hyperlink>
+                            </TextBlock>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" 
+                                       Text="Phone:" 
+                                       Style="{StaticResource LabelStyle}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" 
+                                       Text="+1 (555) 123-4567" 
+                                       Margin="0,5,0,8" 
+                                       FontWeight="Medium"/>
+                        </Grid>
+
+                        <!-- Quick Help -->
+                        <TextBlock Text="Quick Help" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <Border Background="{StaticResource SecondaryBackColor}" 
+                                CornerRadius="6" 
+                                Padding="16" 
+                                Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,12">
+                                    <Run FontWeight="SemiBold">Profile Section:</Run> Update your email and change your password. Your username and role are assigned by the system administrator.
+                                </TextBlock>
+
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,12">
+                                    <Run FontWeight="SemiBold">Settings Section:</Run> Customize your application experience by changing the theme and notification preferences.
+                                </TextBlock>
+
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,12">
+                                    <Run FontWeight="SemiBold">Dashboard:</Run> View key metrics and navigate to different system functions.
+                                </TextBlock>
+
+                                <TextBlock TextWrapping="Wrap" Margin="0,0,0,12">
+                                    <Run FontWeight="SemiBold">Inventory Management:</Run> Track and manage laboratory supplies, reagents, and equipment.
+                                </TextBlock>
+
+                                <TextBlock TextWrapping="Wrap">
+                                    <Run FontWeight="SemiBold">Patient Records:</Run> Access and update patient information and test results.
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- FAQ -->
+                        <TextBlock Text="FAQ" Style="{StaticResource SubSectionHeaderStyle}"/>
+                        <StackPanel Margin="0,0,0,16">
+                            <Expander Header="How do I reset my password?" 
+                                      Style="{StaticResource FAQExpanderStyle}">
+                                <TextBlock TextWrapping="Wrap">
+                                    To reset your password, navigate to the Profile section, enter your current password and your new password twice, then click the "Change Password" button. If you've forgotten your current password, please contact the system administrator.
+                                </TextBlock>
+                            </Expander>
+
+                            <Expander Header="How can I generate reports?" 
+                                      Style="{StaticResource FAQExpanderStyle}">
+                                <TextBlock TextWrapping="Wrap">
+                                    To generate reports, navigate to the Reports section using the main menu. Select the type of report you want to generate, set any filters or parameters, and click "Generate Report". You can export reports in various formats including PDF, Excel, and CSV.
+                                </TextBlock>
+                            </Expander>
+
+                            <Expander Header="How do I manage laboratory inventory?" 
+                                      Style="{StaticResource FAQExpanderStyle}">
+                                <TextBlock TextWrapping="Wrap">
+                                    Inventory management is handled through the Inventory Management section. You can view current stock levels, add new items, update quantities, and set reorder thresholds. The system will automatically generate alerts when items are running low if you've enabled inventory alerts in your settings.
+                                </TextBlock>
+                            </Expander>
+                        </StackPanel>
+
+                        <Button Content="Download User Manual" 
+                                Style="{StaticResource PrimaryButtonStyle}" 
+                                HorizontalAlignment="Left" 
+                                Click="DownloadManual_Click"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
