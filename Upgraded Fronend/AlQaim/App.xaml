@@ -1,0 +1,33 @@
+﻿<Application x:Class="AlQaim.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AlQaim"
+             xmlns:converters="clr-namespace:AlQaim.Converters" 
+            StartupUri="Login.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+           
+            <SolidColorBrush x:Key="PrimaryBackColor" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="SecondaryBackColor" Color="#F4F7FE"/>
+            <SolidColorBrush x:Key="PrimaryAccentColor" Color="#4361EE"/>
+            <SolidColorBrush x:Key="SecondaryAccentColor" Color="#3A0CA3"/>
+            <SolidColorBrush x:Key="TextColor" Color="#333333"/>
+            <SolidColorBrush x:Key="BorderColor" Color="#E1E5EB"/>
+            <SolidColorBrush x:Key="LightGrayColor" Color="#F2F2F2"/>
+            <SolidColorBrush x:Key="GrayTextColor" Color="#888888"/>
+
+       
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:StringIsNullOrEmptyConverter x:Key="StringIsNullOrEmptyConverter"/>
+            <converters:AlternatingRowBackgroundConverter x:Key="AlternatingRowBackgroundConverter"
+                                                          EvenRowBrush="{StaticResource PrimaryBackColor}"
+                                                          OddRowBrush="{StaticResource SecondaryBackColor}"/>
+         
+
+            <ResourceDictionary.MergedDictionaries>
+               
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
